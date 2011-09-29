@@ -3,6 +3,8 @@
 This gem vendors Formalize to the asset pipeline. Therefore, this gem requires Rails 3.1 and
 greater.
 
+## Usage
+
 Add this gem to your gemfile:
 
     gem 'formalize-rails'
@@ -22,3 +24,7 @@ framework you are using:
     //= require yui.formalize
 
 See [formalize.me](http://formalize.me) for more information.
+
+## Gem development
+
+Run `rake update` to get the latest and greatest styles from formalize.
