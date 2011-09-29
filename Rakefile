@@ -46,11 +46,11 @@ task :update do
   threads += css.map do |file|
     Thread.new do
       url  = File.join(base_url, "css", file)
-      path = File.join(target, "stylesheets", file)
+      path = File.join(target, "stylesheets", "#{file}.scss")
       File.open(path, 'w') do |t|
         open url do |f|
           f.each_line do |line|
-            t << line.gsub(%r|url\(.+/([^/]+)\)|, "url(/assets/formalize/\\1)")
+            t << line.gsub(%r|url\(.+/([^/]+)\)|, "image-url('formalize/\\1')")
           end
         end
       end
