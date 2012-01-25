@@ -1,5 +1,5 @@
 /*
-  Formalize - version 1.1
+  Formalize - version 1.2
 
   Note: This file depends on the ExtJS 3.x library.
 */
@@ -7,18 +7,27 @@
 // Module pattern:
 // http://yuiblog.com/blog/2007/06/12/module-pattern
 var FORMALIZE = (function(window, document, undefined) {
+  // Internet Explorer detection.
+  function IE(version) {
+    var b = document.createElement('b');
+    b.innerHTML = '<!--[if IE ' + version + ']><br><![endif]-->';
+    return !!b.getElementsByTagName('br').length;
+  }
+
   // Private constants.
   var PLACEHOLDER_SUPPORTED = 'placeholder' in document.createElement('input');
   var AUTOFOCUS_SUPPORTED = 'autofocus' in document.createElement('input');
-  var IE6 = Ext.isIE6;
-  var IE7 = Ext.isIE7;
+  var IE6 = IE(6);
+  var IE7 = IE(7);
 
   // Expose innards of FORMALIZE.
   return {
     // FORMALIZE.go
     go: function() {
-      for (var i in FORMALIZE.init) {
-        FORMALIZE.init[i]();
+      var i, j = this.init;
+
+      for (i in j) {
+        j.hasOwnProperty(i) && j[i]();
       }
     },
     // FORMALIZE.init
@@ -97,15 +106,14 @@ var FORMALIZE = (function(window, document, undefined) {
         FORMALIZE.misc.add_placeholder();
 
         Ext.each(Ext.query('[placeholder]'), function(el) {
+          // Placeholder obscured in older browsers,
+          // so there's no point adding to password.
+          if (el.type === 'password') {
+            return;
+          }
+
           var text = el.getAttribute('placeholder');
           var form = Ext.get(el).parent('form');
-
-          function add_placeholder() {
-            if (!el.value || el.value === text) {
-              el.value = text;
-              Ext.get(el).addClass('placeholder_text');
-            }
-          }
 
           Ext.get(el).on('focus', function() {
             if (el.value === text) {
@@ -144,6 +152,12 @@ var FORMALIZE = (function(window, document, undefined) {
         }
 
         Ext.each(Ext.query('[placeholder]'), function(el) {
+          // Placeholder obscured in older browsers,
+          // so there's no point adding to password.
+          if (el.type === 'password') {
+            return;
+          }
+
           var text = el.getAttribute('placeholder');
 
           if (!el.value || el.value === text) {

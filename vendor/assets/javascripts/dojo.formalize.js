@@ -1,5 +1,5 @@
 /*
-  Formalize - version 1.1
+  Formalize - version 1.2
 
   Note: This file depends on the Dojo library.
 */
@@ -7,18 +7,27 @@
 // Module pattern:
 // http://yuiblog.com/blog/2007/06/12/module-pattern
 var FORMALIZE = (function(window, document, undefined) {
+  // Internet Explorer detection.
+  function IE(version) {
+    var b = document.createElement('b');
+    b.innerHTML = '<!--[if IE ' + version + ']><br><![endif]-->';
+    return !!b.getElementsByTagName('br').length;
+  }
+
   // Private constants.
   var PLACEHOLDER_SUPPORTED = 'placeholder' in document.createElement('input');
   var AUTOFOCUS_SUPPORTED = 'autofocus' in document.createElement('input');
-  var IE6 = parseInt(dojo.isIE, 10) === 6;
-  var IE7 = parseInt(dojo.isIE, 10) === 7;
+  var IE6 = IE(6);
+  var IE7 = IE(7);
 
   // Expose innards of FORMALIZE.
   return {
     // FORMALIZE.go
     go: function() {
-      for (var i in FORMALIZE.init) {
-        FORMALIZE.init[i]();
+      var i, j = FORMALIZE.init;
+
+      for (i in j) {
+        j.hasOwnProperty(i) && j[i]();
       }
     },
     // FORMALIZE.init
@@ -102,6 +111,12 @@ var FORMALIZE = (function(window, document, undefined) {
         FORMALIZE.misc.add_placeholder();
 
         dojo.query('[placeholder]').forEach(function(el) {
+          // Placeholder obscured in older browsers,
+          // so there's no point adding to password.
+          if (el.type === 'password') {
+            return;
+          }
+
           dojo.connect(el, 'onfocus', function() {
             var text = el.getAttribute('placeholder');
 
@@ -147,6 +162,12 @@ var FORMALIZE = (function(window, document, undefined) {
         }
 
         dojo.query('[placeholder]').forEach(function(el) {
+          // Placeholder obscured in older browsers,
+          // so there's no point adding to password.
+          if (el.type === 'password') {
+            return;
+          }
+
           var text = el.getAttribute('placeholder');
 
           if (!el.value || el.value === text) {

@@ -1,22 +1,31 @@
 /*
-  Formalize - version 1.1
+  Formalize - version 1.2
 
   Note: This file depends on the YUI library.
 */
 
 YUI.add('formalize', function(Y) {
+  // Internet Explorer detection.
+  function IE(version) {
+    var b = document.createElement('b');
+    b.innerHTML = '<!--[if IE ' + version + ']><br><![endif]-->';
+    return !!b.getElementsByTagName('br').length;
+  }
+
   // Private constants.
   var PLACEHOLDER_SUPPORTED = 'placeholder' in document.createElement('input');
   var AUTOFOCUS_SUPPORTED = 'autofocus' in document.createElement('input');
-  var IE6 = parseInt(Y.UA.ie, 10) === 6;
-  var IE7 = parseInt(Y.UA.ie, 10) === 7;
+  var IE6 = IE(6);
+  var IE7 = IE(7);
 
   // Expose innards of Formalize.
   Y.formalize = {
     // Y.formalize.go
     go: function() {
-      for (var i in Y.formalize.init) {
-        Y.formalize.init[i]();
+      var i, j = this.init;
+
+      for (i in j) {
+        j.hasOwnProperty(i) && j[i]();
       }
     },
     // Y.formalize.init
@@ -96,6 +105,12 @@ YUI.add('formalize', function(Y) {
         Y.formalize.misc.add_placeholder();
 
         Y.all('[placeholder]').each(function(el) {
+          // Placeholder obscured in older browsers,
+          // so there's no point adding to password.
+          if (el.getAttribute('type') === 'password') {
+            return;
+          }
+
           var text = el.getAttribute('placeholder');
           var form = el.ancestor('form');
 
@@ -140,6 +155,12 @@ YUI.add('formalize', function(Y) {
         }
 
         Y.all('[placeholder]').each(function(el) {
+          // Placeholder obscured in older browsers,
+          // so there's no point adding to password.
+          if (el.getAttribute('type') === 'password') {
+            return;
+          }
+
           var text = el.getAttribute('placeholder');
 
           if (!el.get('value') || el.get('value') === text) {
