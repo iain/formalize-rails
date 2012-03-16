@@ -50,7 +50,7 @@ task :update do
       File.open(path, 'w') do |t|
         open url do |f|
           f.each_line do |line|
-            t << line.gsub(%r|url\(.+/([^/]+)\)|, "image-url('formalize/\\1)")
+            t << line.gsub(%r|url\(.+/([^/]+)\)|) { |m| "image-url('formalize/#{$1.split("?",2).first}')" }
           end
         end
       end
